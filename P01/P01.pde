@@ -1,94 +1,87 @@
-/**************************** HEADER ****************************
- LecturesInGraphics: Template for Processing sketches in 2D
- Template author: Jarek ROSSIGNAC
- Class: CS3451 Fall 2016
- Student: ??
- Project number: P1
- Project title: ??
- Date of submission: ??
-*****************************************************************/
-
-
+// Template for 2D projects
+// Author: Jarek ROSSIGNAC
+import processing.pdf.*;    // to save screen shots as PDFs, does not always work: accuracy problems, stops drawing or messes up some curves !!!
 
 //**************************** global variables ****************************
-float x, y; // coordinates of blue point controlled by the user
-float vx=1, vy=0; // velocities
-float xb, yb; // coordinates of base point, recorded as mouse location when 'b' is released
+pts P = new pts(); // class containing array of points, used to standardize GUI
+float t=0, f=0;
+boolean animate=true, fill=false, timing=false;
+boolean lerp=true, slerp=true, spiral=true; // toggles to display vector interpoations
+int ms=0, me=0; // milli seconds start and end for timing
+int npts=20000; // number of points
 
 //**************************** initialization ****************************
-void setup() {               // executed once at the begining 
-  size(600, 600);            // window size
+void setup()               // executed once at the begining 
+  {
+  size(800, 800);            // window size
   frameRate(30);             // render 30 frames per second
   smooth();                  // turn on antialiasing
-  myFace = loadImage("data/pic.jpg");  // loads image from file pic.jpg in folder data, replace it with a clear pic of your face
-  xb=x=width/2; yb=y=height/2; // must be executed after size() to know values of width...
-  }
+  myFace = loadImage("data/pic.jpg");  // load image from file pic.jpg in folder data *** replace that file with your pic of your own face
+  P.declare(); // declares all points in P. MUST BE DONE BEFORE ADDING POINTS 
+  // P.resetOnCircle(4); // sets P to have 4 points and places them in a circle on the canvas
+  P.loadPts("data/pts");  // loads points form file saved with this program
+  } // end of setup
 
 //**************************** display current frame ****************************
-void draw() {      // executed at each frame
-  background(white); // clear screen and paints white background
-  pen(black,3); // sets stroke color (to balck) and width (to 3 pixels)
+void draw()      // executed at each frame
+  {
+  if(recordingPDF) startRecordingPDF(); // starts recording graphics to make a PDF
   
-  stroke(green); line(xb,yb,mouseX,mouseY);  // show line from base to mouse
+    background(white); // clear screen and paints white background
+    pt A=P.G[0], B=P.G[1], C=P.G[2], D=P.G[3];     // crates points with more convenient names 
+    
+    pen(black,3); fill(yellow); P.drawCurve(); P.IDs(); // shows polyloop with vertex labels
+    stroke(red); pt G=P.Centroid(); show(G,10); // shows centroid
+    vec PD=R(V(100,0),P.alignentAngle(G)); pt S = P(G,PD); pt E = P(G,-1.,PD); edge(S,E);  // shows principal direction
+    pen(black,2); showId(A,"A"); showId(B,"B"); showId(C,"C"); showId(D,"D");
 
-  if (mousePressed) {fill(white); stroke(red); showDisk(mouseX,mouseY-4,12);} // paints a red disk filled with white if mouse pressed
-  if (keyPressed) {fill(black); text(key,mouseX-2,mouseY); } // writes the character of key if still pressed
-  if (!mousePressed && !keyPressed) scribeMouseCoordinates(); // writes current mouse coordinates if nothing pressed
-  
-  if(animating) {
-    x+=vx; y+=vy; // move the blue point by its current velocity
-    if(y<0) {y=-y; vy=-vy; } // collision with the ceiling
-    if(y>height) {y=height*2-y; vy=-vy; } // collision with the floor
-    if(x<0) {x=-x; vx=-vx; } // collision with the left wall
-    if(x>width) {x=width*2-x; vx=-vx; } // collision with the right wall
-    vy+=.1; // add vertical gravity
-    }
-  
-  noStroke(); fill(blue); showDisk(x,y,5); // show blue disk
-  displayHeader();
+    
+    vec AB=V(A,B), AC=V(A,C);                      // creates vectors with clear names
+    if(lerp) 
+      {
+      pen(cyan,3); 
+      fill(cyan); scribeHeader("1-LERP",3); 
+      for(float t=0.1; t<1; t+=0.1) 
+        {
+        vec V=L(V(A,B),V(A,C),t); 
+        arrow(A,P(A,V));
+        }
+      }
+    if(slerp) 
+      {
+      pen(magenta,3); 
+      fill(magenta); 
+      scribeHeader("2-SLERP",4); 
+      for(float t=0.1; t<1; t+=0.1) 
+        {
+        vec V=slerp(V(A,B),t,V(A,C)); 
+        arrow(A,P(A,V));
+        } 
+      }
+    if(spiral) 
+      {
+      pen(blue,3); 
+      fill(blue); 
+      scribeHeader("3-SPIRAL",5); 
+      for(float t=0.1; t<1; t+=0.1) 
+        {
+        vec V=S(V(A,B),V(A,C),t); 
+        arrow(A,P(A,V));
+        }
+      }
+    pen(red,2); showSpiral(B,D,C);  
+    pen(green,5); arrow(A,B);            // defines line style wiht (5) and color (green) and draws starting arrow from A to B
+    pen(red,5); arrow(A,C);              // draws ending arrow in red
+
+
+  if(recordingPDF) endRecordingPDF();  // end saving a .pdf file with the image of the canvas
+
+  fill(black); displayHeader(); // displays header
   if(scribeText && !filming) displayFooter(); // shows title, menu, and my face & name 
-  if(filming && (animating || change)) saveFrame("FRAMES/F"+nf(frameCounter++,4)+".tif");  
-  change=false; // to avoid capturing frames when nothing happens
-  // make sure that animating is set to true at the beginning of an animation and to false at the end
-  }  // end of draw()
-  
-//************************* mouse and key actions ****************************
-void keyPressed() { // executed each time a key is pressed: the "key" variable contains the correspoinding char, 
-  if(key=='?') scribeText=!scribeText; // toggle display of help text and authors picture
-  if(key=='!') snapPicture(); // make a picture of the canvas
-  if(key=='~') { filming=!filming; } // filming on/off capture frames into folder FRAMES
-  if(key==' ') {xb=x=width/2; yb=y=height/2; vx=0; vy=0;} // reset the blue ball at the center of the screen
-  if(key=='a') animating=true;  // quit application
-  if(key=='Q') exit();  // quit application
-  change=true;
-  }
 
-void keyReleased() { // executed each time a key is released
-  if(key=='b') {xb=mouseX; yb=mouseY;}
-  if(key=='a') animating=false;  // quit application
-  change=true;
-  }
-
-void mouseDragged() { // executed when mouse is pressed and moved
-  if(!keyPressed || key!='y') x+=mouseX-pmouseX; // pressing 'y' locks the motion to vertical displacements
-  if(!keyPressed || key!='x') y+=mouseY-pmouseY;
-  change=true;
-  }
-
-void mouseMoved() { // when mouse is moved
-  change=true;
-  }
+  if(filming && (animating || change)) snapFrameToTIF(); // saves image on canvas as movie frame 
+  if(snapTIF) snapPictureToTIF();   
+  if(snapJPG) snapPictureToJPG();   
+  change=false; // to avoid capturing movie frames when nothing happens
+  }  // end of draw
   
-void mousePressed() { // when mouse key is pressed 
-  change=true;
-  }
-  
-void mouseReleased() { // when mouse key is released 
-  vx=mouseX-pmouseX; vy=mouseY-pmouseY; // sets the velocity of the blue dot to the last mouse motion (unreliable)
-  change=true;
-  }
-  
-//*************** text drawn on the canvas for name, title and help  *******************
-String title ="CS3451, Fall 2013, Project 01: 'Project Title goes here'", name ="your name goes here", // enter project number and your name
-       menu="?:(show/hide) help, !:snap picture, ~:(start/stop) recording frames for movie, Q:quit",
-       guide="Press&drag mouse to move dot. 'x', 'y' restrict motion, 'a' animates free-fall"; // help info
