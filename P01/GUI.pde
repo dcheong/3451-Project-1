@@ -158,7 +158,7 @@ void mouseWheel(MouseEvent event) { // reads mouse wheel and uses to zoom
   }
 
 //**************************** text for name, title and help  ****************************
-String title ="Compare vector interpolations ",            name ="Student: First LAST",
+String title ="Compare vector interpolations ",            name ="Student: Lily LAU, Douglas CHEONG",
        subtitle = "   for Jarek Rossignac's CS3451 class in the Fall 2016",
        
        menu="?:(show/hide) help, ~/!/@:snap pdf/jpg/fif, `:(start/stop) recording, S/L:save/load, Q:quit",

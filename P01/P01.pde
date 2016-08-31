@@ -18,7 +18,7 @@ void setup()               // executed once at the begining
   smooth();                  // turn on antialiasing
   myFace = loadImage("data/pic.jpg");  // load image from file pic.jpg in folder data *** replace that file with your pic of your own face
   P.declare(); // declares all points in P. MUST BE DONE BEFORE ADDING POINTS 
-  //P.resetOnCircle(8); // sets P to have 4 points and places them in a circle on the canvas
+  //P.resetOnCircle(4); // sets P to have 4 points and places them in a circle on the canvas
   P.loadPts("data/pts");  // loads points form file saved with this program
   } // end of setup
 
@@ -34,12 +34,19 @@ void draw()      // executed at each frame
     stroke(red); pt G=P.Centroid(); show(G,10); // shows centroid
     vec PD=R(V(100,0),P.alignentAngle(G)); pt S = P(G,PD); pt E = P(G,-1.,PD); edge(S,E);  // shows principal direction
     pen(black,2); showId(A,"A"); showId(B,"B"); showId(C,"C"); showId(D,"D");
+    
+    ///increase time
     t += 0.01;
     if (t >= 1) {
       t = 0.1;
     }
     
-    vec AB=V(A,B), AC=V(A,C);                      // creates vectors with clear names
+    vec AB=V(A,B), AC=V(A,C), CD=V(C,D), BC=V(B,C), AD=V(A,D);    // creates vectors with clear names
+    
+    pen(green, 3);
+    vec V=S(AB,CD, t);
+    arrow(A,P(A,V));
+    /*
     if(lerp) 
       {
       pen(cyan,3); 
@@ -63,6 +70,7 @@ void draw()      // executed at each frame
       vec V=S(V(A,B),V(A,C),t); 
       arrow(A,P(A,V));
       }
+     */
     pen(red,2); showSpiral(B,D,C);  
     pen(green,5); arrow(A,B);            // defines line style wiht (5) and color (green) and draws starting arrow from A to B
     pen(red,5); arrow(A,C);              // draws ending arrow in red
