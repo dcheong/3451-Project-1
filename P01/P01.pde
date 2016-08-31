@@ -30,22 +30,22 @@ void draw()      // executed at each frame
     background(white); // clear screen and paints white background
     pt A=P.G[0], B=P.G[1], C=P.G[2], D=P.G[3];     // crates points with more convenient names 
     
-    pen(black,3); fill(yellow); P.drawCurve(); P.IDs(); // shows polyloop with vertex labels
-    stroke(red); pt G=P.Centroid(); show(G,10); // shows centroid
+    //pen(black,3); fill(yellow); P.drawCurve(); P.IDs(); // shows polyloop with vertex labels
+    //stroke(red);
+    pt G=P.Centroid(); show(G,10); // shows centroid
     vec PD=R(V(100,0),P.alignentAngle(G)); pt S = P(G,PD); pt E = P(G,-1.,PD); edge(S,E);  // shows principal direction
     pen(black,2); showId(A,"A"); showId(B,"B"); showId(C,"C"); showId(D,"D");
     
-    ///increase time
-    t += 0.01;
-    if (t >= 1) {
-      t = 0.1;
-    }
     
     vec AB=V(A,B), AC=V(A,C), CD=V(C,D), BC=V(B,C), AD=V(A,D);    // creates vectors with clear names
-    
     pen(green, 3);
-    vec V=S(AB,CD, t);
-    arrow(A,P(A,V));
+    for (float t = 0.1; t < 1; t+=0.1) {
+      pt At = spiralA(A,B,D,C,t);
+      pt Bt = spiralB(A,B,D,C,t);
+      vec V=S(AB,CD, t);
+      line(At.x,At.y,Bt.x, Bt.y);
+    }
+    
     /*
     if(lerp) 
       {
@@ -71,7 +71,7 @@ void draw()      // executed at each frame
       arrow(A,P(A,V));
       }
      */
-    pen(red,2); showSpiral(B,D,C);  
+    //pen(red,2); showSpiral(B,D,C);  
     pen(green,5); arrow(A,B);            // defines line style wiht (5) and color (green) and draws starting arrow from A to B
     pen(red,5); arrow(A,C);              // draws ending arrow in red
 
