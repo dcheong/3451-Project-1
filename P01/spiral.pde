@@ -28,6 +28,9 @@ pt spiralCenter(float a, float z, pt A, pt C)
   return P(x,y);
   }
 
+edge spiral(edge A, edge B, float t) {
+  return new edge(spiralA(A.A,A.B,B.A,B.B,t),spiralB(A.A,A.B,B.A,B.B,t));
+}
 
 // IMAGE OF POINT Q BY SPIRAL MOTION THAT MORPHS EDGE(A,B) AND EDGE(C,D)
 pt spiral(pt A, pt B, pt C, pt D, float t, pt Q) 
@@ -56,7 +59,8 @@ pt spiralB(pt A, pt B, pt C, pt D, float t)
   pt G = spiralCenter(a, s, A, C); 
   return L(G,R(B,t*a,G),pow(s,t));
   }
- 
+
+
  
 // IMAGE OF POINT B BY SPIRAL MOTION THAT MORPHS EDGE(A,B) AND EDGE(B,C): USED FOR SPIRALINE SUBDIVISION
 pt spiral(pt A, pt B, pt C, float t) 
@@ -84,3 +88,8 @@ vec slerp(vec U, float t, vec V)
   return W(b/d,U,c/d,V); 
   }
   
+edge W(edge U, edge V, float f, float maxf)
+  {
+    float t = (1 - cos(TWO_PI * f/maxf))/2;
+    return spiral(U,V,t);
+  }

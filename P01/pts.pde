@@ -40,6 +40,15 @@ class pts
     insertPt(closestProjectionOf(M));
     }
   
+  void resetOnCorners()
+    {
+      empty();
+      addPt(0,0);
+      addPt(width, 0);
+      addPt(0, height);
+      addPt(width, height);
+    }
+  
   void resetOnCircle(int k)                                                         // init the points to be on a well framed circle
     {
     empty();
