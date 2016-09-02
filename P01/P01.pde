@@ -8,6 +8,9 @@ boolean animate=true, fill=false, timing=false;
 boolean lerp=true, slerp=true, spiral=true; // toggles to display vector interpoations
 int ms=0, me=0; // milli seconds start and end for timing
 int npts=20000; // number of points
+boolean up = true;
+color c = color(255,0,255);
+pt A, B, C, D;
 
 //**************************** initialization ****************************
 void setup()               // executed once at the begining 
@@ -18,8 +21,17 @@ void setup()               // executed once at the begining
   myFace = loadImage("data/pic.jpg");  // load image from file pic.jpg in folder data *** replace that file with your pic of your own face
   P.declare(); // declares all points in P. MUST BE DONE BEFORE ADDING POINTS 
   //P.resetOnCorners();
-  P.resetOnCircle(4); // sets P to have 4 points and places them in a circle on the canvas
-  //P.loadPts("data/pts");  // loads points form file saved with this program
+  //P.resetOnCircle(4); // sets P to have 4 points and places them in a circle on the canvas
+  P.loadPts("data/pts");  // loads points form file saved with this program
+  A = P.G[0];
+  B = P.G[1];
+  C = P.G[2];
+  D = P.G[3];
+  vec V = new vec(1., 1.);
+  vec V1 = new vec(-1., -1.);
+  vec V2 = new vec(1., -1.);
+  vec V3 = new vec(-1., 1.);
+  A.V = V; B.V = V1; C.V = V2; D.V = V3;
   } // end of setup
 
 //**************************** display current frame ****************************
@@ -28,32 +40,37 @@ void draw()      // executed at each frame
   if(recordingPDF) startRecordingPDF(); // starts recording graphics to make a PDF
   
     background(black); // clear screen and paints white background
-    pt A=P.G[0], B=P.G[1], C=P.G[2], D=P.G[3], E=P.G[4];     // crates points with more convenient names 
+    //pt A=P.G[0], B=P.G[1], C=P.G[2], D=P.G[3];     // crates points with more convenient names 
+    
+    A.update();
+    B.update();
+    C.update();
+    D.update();
+    
     
     //pen(black,3); fill(yellow); P.drawCurve(); P.IDs(); // shows polyloop with vertex labels
     //stroke(red);
-    pt G=P.Centroid(); show(G,10); // shows centroid
+    //pt G=P.Centroid(); show(G,10); // shows centroid
     //vec PD=R(V(100,0),P.alignentAngle(G)); pt S = P(G,PD); pt E = P(G,-1.,PD); edge(S,E);  // shows principal direction
-    
-    
-    
+   
     pen(green, 1);
     
     edge AB = new edge(A,B);
     edge BC = new edge(B,C);
     edge CD = new edge(C,D);
-    edge DA = new edge(D,A);
+    edge AD = new edge(A,D);
     edge x = W(AB,BC,t,5);
     //line(AB.A.x,AB.A.y,AB.B.x,AB.B.y);
     //line(BC.A.x,BC.A.y,BC.B.x,BC.B.y);
     //line(CD.A.x,CD.A.y,CD.B.x,CD.B.y);
     //line(DA.A.x,DA.A.y,DA.B.x,DA.B.y);
-    for (float t = 0.1; t < 5; t+=0.05) {
-      edge wiper = W(x,BC,t,5);
-      edge wiper2 = W(x,DA,t,5);
+    for (float t = 0.1; t < 5; t+=0.1) {
+      pen(color(255.*t/5.,255-(255.*t/10.),255),1);
+      edge wiper = W(BC,x,t,5);
+      edge wiper2 = W(AB,AD,t,5);
       edge wiper3 = W(wiper,wiper2,t,5);
-      line(wiper.A.x,wiper.A.y,wiper.B.x,wiper.B.y);
-      line(wiper2.A.x,wiper2.A.y,wiper2.B.x,wiper2.B.y);
+      //line(wiper.A.x,wiper.A.y,wiper.B.x,wiper.B.y);
+      //line(wiper2.A.x,wiper2.A.y,wiper2.B.x,wiper2.B.y);
       line(wiper3.A.x,wiper3.A.y,wiper3.B.x,wiper3.B.y);
     }
     t += 0.1;
@@ -93,7 +110,7 @@ void draw()      // executed at each frame
     //pen(green,5); arrow(A,B);            // defines line style wiht (5) and color (green) and draws starting arrow from A to B
     //pen(red,5); arrow(A,C);              // draws ending arrow in red
 
-  pen(black,2); showId(A,"A"); showId(B,"B"); showId(C,"C"); showId(D,"D");
+  pen(white,2); showId(A,"A"); showId(B,"B"); showId(C,"C"); showId(D,"D");
   if(recordingPDF) endRecordingPDF();  // end saving a .pdf file with the image of the canvas
 
   fill(white); displayHeader(); // displays header

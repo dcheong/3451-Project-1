@@ -10,7 +10,8 @@
 //************************************************************************
 class pt 
   { 
-  float x=0,y=0; 
+  float x=0,y=0;
+  vec V = new vec(0.,0.);
   
   // CREATE
   pt () {}
@@ -20,6 +21,27 @@ class pt
   pt setTo(float px, float py) {x = px; y = py; return this;};  
   pt setTo(pt P) {x = P.x; y = P.y; return this;}; 
   pt setToMouse() { x = mouseX; y = mouseY;  return this;}; 
+  boolean predictOutOfBounds() {
+    return (x + V.x > width || x + V.x < 0 || y + V.y > height || y + V.y < 0);
+  }
+  pt addVel() {x+=V.x; y+=V.y; return this;}
+  void update() {
+    if (!predictOutOfBounds()) {
+      addVel();
+    } else {
+      if (x + V.x > width || x + V.x < 0) {
+        if (x > width) {x = width - 1;}
+        else if (x < 0) {x = 1;}
+        V.x = -V.x;
+      }
+      if (y + V.y > height || y + V.y < 0) {
+        if (y > height) y = height - 1;
+        if (y < 0) y = 1;
+        V.y = -V.y;
+      }
+      addVel();
+    }
+  }
   pt add(float u, float v) {x += u; y += v; return this;}                       // P.add(u,v): P+=<u,v>
   pt add(pt P) {x += P.x; y += P.y; return this;};                              // incorrect notation, but useful for computing weighted averages
   pt add(float s, pt P)   {x += s*P.x; y += s*P.y; return this;};               // adds s*P
@@ -138,7 +160,7 @@ void show(pt P, float r) {ellipse(P.x, P.y, 2*r, 2*r);};                        
 void show(pt P) {ellipse(P.x, P.y, 6,6);};                                                           // draws small circle around point
 void label(pt P, String S) {text(S, P.x-4,P.y+6.5); }                                                 // writes string S next to P on the screen ( for example label(P[i],str(i));)
 void label(pt P, vec V, String S) {text(S, P.x-3.5+V.x,P.y+7+V.y); }                                  // writes string S at P+V
-void showId(pt P, String S) {fill(white); show(P,13); fill(black); label(P,S);}                       // sows disk with S written inside
+void showId(pt P, String S) {fill(white); show(P,7); fill(black); label(P,S);}                       // sows disk with S written inside
 void edge(pt P, pt Q) {line(P.x,P.y,Q.x,Q.y); };                                                      // draws edge (P,Q)
 void v(pt P) {vertex(P.x,P.y);};                                                                      // vertex for drawing polygons between beginShape() and endShape()
 void arrow(pt P, pt Q) {arrow(P,V(P,Q)); }                                                            // draws arrow from P to Q
