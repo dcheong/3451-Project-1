@@ -41,7 +41,6 @@ void draw()      // executed at each frame
   
     background(black); // clear screen and paints white background
     //pt A=P.G[0], B=P.G[1], C=P.G[2], D=P.G[3];     // crates points with more convenient names 
-    
     A.update();
     B.update();
     C.update();
@@ -67,11 +66,18 @@ void draw()      // executed at each frame
     for (float t = 0.1; t < 5; t+=0.1) {
       pen(color(255.*t/5.,255-(255.*t/10.),255),1);
       edge wiper = W(BC,x,t,5);
-      edge wiper2 = W(AB,AD,t,5);
+      edge wiper2 = W(AB,CD,t,5);
+      edge wiper2ALT = W(AD,AB,t,5);
       edge wiper3 = W(wiper,wiper2,t,5);
+      edge wiper3ALT = W(wiper,wiper2ALT,t,5);
+      edge wiper4 = W(wiper2,wiper,t,5);
+      edge wiper5 = W(wiper3,wiper4,t,5);
       //line(wiper.A.x,wiper.A.y,wiper.B.x,wiper.B.y);
-      //line(wiper2.A.x,wiper2.A.y,wiper2.B.x,wiper2.B.y);
-      line(wiper3.A.x,wiper3.A.y,wiper3.B.x,wiper3.B.y);
+      line(wiper2.A.x,wiper2.A.y,wiper2.B.x,wiper2.B.y);
+      //line(wiper3.A.x,wiper3.A.y,wiper3.B.x,wiper3.B.y);
+      //line(wiper3ALT.A.x,wiper3ALT.A.y,wiper3ALT.B.x,wiper3ALT.B.y);
+      //line(wiper4.A.x,wiper4.A.y,wiper4.B.x,wiper4.B.y);
+      //line(wiper5.A.x,wiper5.A.y,wiper5.B.x,wiper5.B.y);
     }
     t += 0.1;
     //pt At = spiralA(A,B,D,C,t);

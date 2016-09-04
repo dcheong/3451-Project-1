@@ -24,8 +24,20 @@ class pt
   boolean predictOutOfBounds() {
     return (x + V.x > width || x + V.x < 0 || y + V.y > height || y + V.y < 0);
   }
+  void velTowardsMouse() { 
+    double distance = Math.sqrt(pow(mouseX - x,2) + pow(mouseY - y,2));
+    float xdiff = mouseX - x;
+    float ydiff = mouseY - y;
+    V.x += xdiff/distance;
+    if (V.x < -1.) {V.x = -1.;}
+    if (V.x > 1.) {V.x = 1.;}
+    V.y += ydiff/distance;
+    if (V.y < -1.) {V.y = -1.;}
+    if (V.y > 1.) {V.y = 1.;}
+  }
   pt addVel() {x+=V.x; y+=V.y; return this;}
   void update() {
+    velTowardsMouse();
     if (!predictOutOfBounds()) {
       addVel();
     } else {
