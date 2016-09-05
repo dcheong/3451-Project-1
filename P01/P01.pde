@@ -11,6 +11,10 @@ int npts=20000; // number of points
 boolean up = true;
 color c = color(255,0,255);
 pt A, B, C, D;
+pt tL, tR, bL, bR;
+edge top, left, right, bottom;
+edge colorInitial = new edge(new pt(0,0), new pt(255, 0));
+edge colorFinal = new edge(new pt(255,255), new pt(0, 255));
 
 //**************************** initialization ****************************
 void setup()               // executed once at the begining 
@@ -21,17 +25,22 @@ void setup()               // executed once at the begining
   myFace = loadImage("data/pic.jpg");  // load image from file pic.jpg in folder data *** replace that file with your pic of your own face
   P.declare(); // declares all points in P. MUST BE DONE BEFORE ADDING POINTS 
   //P.resetOnCorners();
-  //P.resetOnCircle(4); // sets P to have 4 points and places them in a circle on the canvas
-  P.loadPts("data/pts");  // loads points form file saved with this program
+  P.resetOnCircle(4); // sets P to have 4 points and places them in a circle on the canvas
+  //P.loadPts("data/pts");  // loads points form file saved with this program
   A = P.G[0];
   B = P.G[1];
   C = P.G[2];
   D = P.G[3];
-  vec V = new vec(1., 1.);
-  vec V1 = new vec(-1., -1.);
-  vec V2 = new vec(1., -1.);
-  vec V3 = new vec(-1., 1.);
-  A.V = V; B.V = V1; C.V = V2; D.V = V3;
+  //initialize corner points
+  tL = new pt(0,0);
+  tR = new pt(width, 0);
+  bL = new pt(0, height);
+  bR = new pt(width, height);
+  //initialize screen edges
+  top = new edge(tL, tR);
+  left = new edge(bL, tL);
+  right = new edge(tR, bR);
+  bottom = new edge(bR, bL);
   } // end of setup
 
 //**************************** display current frame ****************************
@@ -41,10 +50,7 @@ void draw()      // executed at each frame
   
     background(black); // clear screen and paints white background
     //pt A=P.G[0], B=P.G[1], C=P.G[2], D=P.G[3];     // crates points with more convenient names 
-    A.update();
-    B.update();
-    C.update();
-    D.update();
+    
     
     
     //pen(black,3); fill(yellow); P.drawCurve(); P.IDs(); // shows polyloop with vertex labels
@@ -57,27 +63,36 @@ void draw()      // executed at each frame
     edge AB = new edge(A,B);
     edge BC = new edge(B,C);
     edge CD = new edge(C,D);
-    edge AD = new edge(A,D);
-    edge x = W(AB,BC,t,5);
+    edge AD = new edge(D,A);
     //line(AB.A.x,AB.A.y,AB.B.x,AB.B.y);
     //line(BC.A.x,BC.A.y,BC.B.x,BC.B.y);
     //line(CD.A.x,CD.A.y,CD.B.x,CD.B.y);
     //line(DA.A.x,DA.A.y,DA.B.x,DA.B.y);
-    for (float t = 0.1; t < 5; t+=0.1) {
+    edge[] edges1 = new edge[30];
+    edge[] edges2 = new edge[30];
+    edge[] edges3 = new edge[30];
+    edge[] edges4 = new edge[30];
+    for (float t = 0; t < 3; t+=0.1) {
+      System.out.println((int)(t*10));
+      int index = (int)(t * 10);
+      edges1[index] = W(AB,right,t,3);
+      edges2[index] = W(BC,bottom,t,3);
+      edges3[index] = W(CD,left,t,3);
+      edges4[index] = W(AD,top,t,3);
       pen(color(255.*t/5.,255-(255.*t/10.),255),1);
-      edge wiper = W(BC,x,t,5);
-      edge wiper2 = W(AB,CD,t,5);
-      edge wiper2ALT = W(AD,AB,t,5);
-      edge wiper3 = W(wiper,wiper2,t,5);
-      edge wiper3ALT = W(wiper,wiper2ALT,t,5);
-      edge wiper4 = W(wiper2,wiper,t,5);
-      edge wiper5 = W(wiper3,wiper4,t,5);
-      //line(wiper.A.x,wiper.A.y,wiper.B.x,wiper.B.y);
-      line(wiper2.A.x,wiper2.A.y,wiper2.B.x,wiper2.B.y);
-      //line(wiper3.A.x,wiper3.A.y,wiper3.B.x,wiper3.B.y);
-      //line(wiper3ALT.A.x,wiper3ALT.A.y,wiper3ALT.B.x,wiper3ALT.B.y);
-      //line(wiper4.A.x,wiper4.A.y,wiper4.B.x,wiper4.B.y);
-      //line(wiper5.A.x,wiper5.A.y,wiper5.B.x,wiper5.B.y);
+      drawEdge(edges1[index]);
+      drawEdge(edges2[index]);
+      drawEdge(edges3[index]);
+      drawEdge(edges4[index]);
+    }
+    for (int i = 1; i < edges1.length; i++) {
+      edge colorCurrent = W(colorInitial, colorFinal, i/10., 10);
+      fill(color(colorCurrent.A.x,colorCurrent.B.x,255));
+      System.out.println(i);
+      drawShape(edges1[i],edges1[i-1]);
+      drawShape(edges2[i],edges2[i-1]);
+      drawShape(edges3[i],edges3[i-1]);
+      drawShape(edges4[i],edges4[i-1]);
     }
     t += 0.1;
     //pt At = spiralA(A,B,D,C,t);

@@ -37,7 +37,7 @@ class pt
   }
   pt addVel() {x+=V.x; y+=V.y; return this;}
   void update() {
-    velTowardsMouse();
+    //velTowardsMouse();
     if (!predictOutOfBounds()) {
       addVel();
     } else {
