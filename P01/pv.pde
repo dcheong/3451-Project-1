@@ -16,7 +16,7 @@ class pt
   // CREATE
   pt () {}
   pt (float px, float py) {x = px; y = py;};
-
+  
   // MODIFY
   pt setTo(float px, float py) {x = px; y = py; return this;};  
   pt setTo(pt P) {x = P.x; y = P.y; return this;}; 

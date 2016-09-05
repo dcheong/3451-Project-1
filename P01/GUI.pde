@@ -129,24 +129,24 @@ void keyPressed()  // executed each time a key is pressed: sets the Boolean "key
 
 void mousePressed()   // executed when the mouse is pressed
   {
-  P.pickClosest(Mouse()); // pick vertex closest to mouse: sets pv ("picked vertex") in pts
+  //P.pickClosest(Mouse()); // pick vertex closest to mouse: sets pv ("picked vertex") in pts
   if (keyPressed) 
      {
-     if (key=='a')  P.addPt(Mouse()); // appends vertex after the last one
-     if (key=='i')  P.insertClosestProjection(Mouse()); // inserts vertex at closest projection of mouse
-     if (key=='d')  P.deletePickedPt(); // deletes vertex closeset to mouse
+     //if (key=='a')  P.addPt(Mouse()); // appends vertex after the last one
+     //if (key=='i')  P.insertClosestProjection(Mouse()); // inserts vertex at closest projection of mouse
+     //if (key=='d')  P.deletePickedPt(); // deletes vertex closeset to mouse
      }  
   change=true;
   }
 
 void mouseDragged() // executed when the mouse is dragged (while mouse buttom pressed)
   {
-  if (!keyPressed || (key=='a')|| (key=='i')) P.dragPicked();   // drag selected point with mouse
+  //if (!keyPressed || (key=='a')|| (key=='i')) P.dragPicked();   // drag selected point with mouse
   if (keyPressed) {
-      if (key=='.') f+=2.*float(mouseX-pmouseX)/width;  // adjust current frame   
-      if (key=='t') P.dragAll(); // move all vertices
-      if (key=='r') P.rotateAllAroundCentroid(Mouse(),Pmouse()); // turn all vertices around their center of mass
-      if (key=='z') P.scaleAllAroundCentroid(Mouse(),Pmouse()); // scale all vertices with respect to their center of mass
+      //if (key=='.') f+=2.*float(mouseX-pmouseX)/width;  // adjust current frame   
+      //if (key=='t') P.dragAll(); // move all vertices
+      //if (key=='r') P.rotateAllAroundCentroid(Mouse(),Pmouse()); // turn all vertices around their center of mass
+      //if (key=='z') P.scaleAllAroundCentroid(Mouse(),Pmouse()); // scale all vertices with respect to their center of mass
       }
   change=true;
   }  
