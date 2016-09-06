@@ -56,7 +56,7 @@ Boolean scribeText=true; // toggle for displaying of help text
 void scribe(String S, float x, float y) {fill(0); text(S,x,y); noFill();} // writes on screen at (x,y) with current fill color
 void scribeHeader(String S, int i) { text(S,10,20+i*20); noFill();} // writes black at line i
 void scribeHeaderRight(String S) {fill(white); text(S,width-7.5*S.length(),20); noFill();} // writes black on screen top, right-aligned
-void scribeFooter(String S, int i) {fill(0); text(S,10,height-10-i*20); noFill();} // writes black on screen at line i from bottom
+void scribeFooter(String S, int i) {fill(white); text(S,10,height-10-i*20); noFill();} // writes black on screen at line i from bottom
 void scribeAtMouse(String S) {fill(0); text(S,mouseX,mouseY); noFill();} // writes on screen near mouse
 void scribeMouseCoordinates() {fill(black); text("("+mouseX+","+mouseY+")",mouseX+7,mouseY+25); noFill();}
 void displayHeader()  // Displays title and authors face on screen

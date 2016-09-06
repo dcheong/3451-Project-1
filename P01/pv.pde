@@ -12,6 +12,7 @@ class pt
   { 
   float x=0,y=0;
   vec V = new vec(0.,0.);
+  vec A = new vec(0.,0.);
   
   // CREATE
   pt () {}
@@ -36,10 +37,12 @@ class pt
     if (V.y > 1.) {V.y = 1.;}
   }
   pt addVel() {x+=V.x; y+=V.y; return this;}
+  pt addAccel() {V.x += A.x; V.y += A.y; return this;}
   void update() {
     //velTowardsMouse();
     if (!predictOutOfBounds()) {
       addVel();
+      addAccel();
     } else {
       if (x + V.x > width || x + V.x < 0) {
         if (x > width) {x = width - 1;}
@@ -52,6 +55,7 @@ class pt
         V.y = -V.y;
       }
       addVel();
+      addAccel();
     }
   }
   pt add(float u, float v) {x += u; y += v; return this;}                       // P.add(u,v): P+=<u,v>

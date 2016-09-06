@@ -13,13 +13,14 @@ import ddf.minim.ugens.*;
 pts P = new pts(); // class containing array of points, used to standardize GUI
 float t=0, f=0;
 boolean animate=true, fill=false, timing=false;
-boolean drift = true;
+boolean drift = false;
 int ms=0, me=0; // milli seconds start and end for timing
 int npts=20000; // number of points
 boolean up = true;
 color c = color(255,0,255);
 pt A, B, C, D;
 pt tL, tR, bL, bR;
+vec g;
 edge top, left, right, bottom;
 edge colorInitial = new edge(new pt(0,0), new pt(255, 0));
 edge colorFinal = new edge(new pt(255,255), new pt(0, 255));
@@ -49,6 +50,11 @@ void setup()               // executed once at the begining
   B = P.G[1];
   C = P.G[2];
   D = P.G[3];
+  g = new vec(0, 0.1);
+  A.A = g;
+  B.A = g;
+  C.A = g;
+  D.A = g;
   //initialize corner points
   tL = new pt(0,0);
   tR = new pt(width, 0);
@@ -71,11 +77,20 @@ void setup()               // executed once at the begining
 void draw()      // executed at each frame
   {
   if(recordingPDF) startRecordingPDF(); // starts recording graphics to make a PDF
-    P.moveAll(new vec(mouseX - P.Centroid().x, mouseY - P.Centroid().y)); //make the points follow the mouse
-    volume = (song.left.level() + song.right.level()) / 2;
-    background(white); // clear screen and paints white background
+    if (drift) {
+      A.update();
+      B.update();
+      C.update();
+      D.update();
+      background(black);
+    } else {
+      P.moveAll(new vec(mouseX - P.Centroid().x, mouseY - P.Centroid().y)); //make the points follow the mouse
+      background(white);
+    }
     
-
+    volume = (song.left.level() + song.right.level()) / 2;
+    
+    
     edge AB = new edge(A,B);
     edge BC = new edge(B,C);
     edge CD = new edge(C,D);
@@ -101,6 +116,10 @@ void draw()      // executed at each frame
     }
     for (int i = 1; i < edges1.length; i++) {
       edge colorCurrent = W(colorInitial, colorFinal, i/10., 10);
+      if (drift) {
+        colorCurrent = W(colorFinal, colorInitial, i/10., 10);
+      }
+      
       noStroke();
       fill(color(colorCurrent.A.x * volume,colorCurrent.B.x * volume,255 * volume));
       drawShape(edges1[i],edges1[i-1]);
@@ -111,7 +130,11 @@ void draw()      // executed at each frame
     for (int i = 0; i < edges1.length; i++) {
       pen(color(255,255,255,10), 1);
       if (i < volume * edges1.length) {
-        pen(white, 1);
+        if (drift) {
+          pen(red, 1);
+        } else {
+          pen(white, 1);
+        }
       }
         drawEdge(edges1[i]);
         drawEdge(edges2[i]);
@@ -159,9 +182,9 @@ void draw()      // executed at each frame
   if(recordingPDF) endRecordingPDF();  // end saving a .pdf file with the image of the canvas
 
   fill(white); displayHeader(); // displays header
-  //if(scribeText && !filming) displayFooter(); // shows title, menu, and my face & name 
+  if(scribeText && !filming) displayFooter(); // shows title, menu, and my face & name 
 
-  if(filming && (animating || change)) snapFrameToTIF(); // saves image on canvas as movie frame 
+  if(filming) snapFrameToTIF(); // saves image on canvas as movie frame 
   if(snapTIF) snapPictureToTIF();   
   if(snapJPG) snapPictureToJPG();   
   change=false; // to avoid capturing movie frames when nothing happens

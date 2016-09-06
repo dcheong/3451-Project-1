@@ -129,6 +129,26 @@ void keyPressed()  // executed each time a key is pressed: sets the Boolean "key
 
 void mousePressed()   // executed when the mouse is pressed
   {
+    if (drift) {
+      P.resetOnCircle(4);
+      A = P.G[0];
+      B = P.G[1];
+      C = P.G[2];
+      D = P.G[3];
+      g = new vec(0, 0.1);
+      vec v = new vec(0.,0.);
+      A.V = v;
+      B.V = v;
+      C.V = v;
+      D.V = v;
+      A.A = g;
+      B.A = g;
+      C.A = g;
+      D.A = g;
+      P.scaleAllAroundCentroid(0.75);
+    }
+    drift = !drift;
+    
   //P.pickClosest(Mouse()); // pick vertex closest to mouse: sets pv ("picked vertex") in pts
   if (keyPressed) 
      {
@@ -162,5 +182,5 @@ String title ="Compare vector interpolations ",            name ="Student: Lily 
        subtitle = "   for Jarek Rossignac's CS3451 class in the Fall 2016",
        
        menu="?:(show/hide) help, ~/!/@:snap pdf/jpg/fif, `:(start/stop) recording, S/L:save/load, Q:quit",
-       guide="click and drag to edit, press '1', '2', '3' to toggle LERP, SLERP, SPIRAL"; // help info
+       guide="click to toggle point gravity"; // help info
        
